@@ -31,7 +31,7 @@
     name: 'profile-details',
     data () {
       return {
-        maxThumbnails: 20,
+        maxThumbnails: 10,
         thumbnails: [],
         thumbnailPath: false,
         thumbnailProgress: 0,
