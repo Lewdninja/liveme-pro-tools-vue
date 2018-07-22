@@ -11,12 +11,11 @@ const appSettings = require('electron-settings')
 const LivemeAPI = require('liveme-api')
 const Liveme = new LivemeAPI({})
 
-let mainWindow = null
-let playerWindow = null
-let bookmarksWindow = null
-// let chatWindow = null
-// let wizardWindow = null
-// let menu = null
+const appWindows = {
+  main: null,
+  player: null,
+  bookmarks: null
+}
 
 /**
  * Set `__static` path to static files in production
@@ -33,34 +32,30 @@ const winURL = process.env.NODE_ENV === 'development'
 function createWindow () {
   helpers.checkFreshInstallAndSettings()
 
-  mainWindow = windows.main()
-  mainWindow.loadURL(winURL)
+  appWindows.main = windows.main()
+  appWindows.main.loadURL(winURL)
 
   global.Liveme = Liveme
   if (appSettings.get('auth.email') && appSettings.get('auth.password')) {
     global.Liveme.setAuthDetails(appSettings.get('auth.email').trim(), appSettings.get('auth.password').trim())
       .catch(e => console.log('Authentication failed.', JSON.stringify(e.message)))
   }
-
+  // Load data to app
   global.DataManager = new DataManager()
   global.DataManager.loadFromDisk()
-
   // Save data every 10 minutes, just in case app crashes and it doesn't emit close event.
   setInterval(() => global.DataManager.saveToDisk(), 10 * 60 * 1000)
-
-  mainWindow.on('close', () => {
+  // Before we close the app
+  appWindows.main.on('close', () => {
+    // Save app data to disk
     global.DataManager.saveToDisk()
-
-    appSettings.set('position.mainWindow', mainWindow.getPosition())
-    appSettings.set('size.mainWindow', mainWindow.getSize())
-
-    if (playerWindow !== null) {
-      playerWindow.close()
-    }
-    if (bookmarksWindow !== null) {
-      bookmarksWindow.close()
-    }
-    setTimeout(() => app.quit(), 1000)
+    // Save main window size and position to config
+    appSettings.set('position.mainWindow', appWindows.main.getPosition())
+    appSettings.set('size.mainWindow', appWindows.main.getSize())
+    // Destroy all windows
+    Object.entries(appWindows).forEach(([index, window]) => {
+      if (window !== null) window.destroy()
+    })
   })
 }
 
@@ -74,16 +69,14 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow()
-  }
+  if (appWindows.main === null) createWindow()
 })
 
 /**
  * IPC Events
  */
 ipcMain.on('router.push', (event, arg) => {
-  mainWindow.webContents.send('router.push', arg)
+  appWindows.main.webContents.send('router.push', arg)
 })
 
 ipcMain.on('open-player', (event, arg) => {
@@ -99,16 +92,16 @@ ipcMain.on('open-player', (event, arg) => {
       ? `http://localhost:9080/#/player/${arg.videoid}`
       : `file://${__dirname}/index.html#player/${arg.videoid}`
     // Internal Player
-    if (playerWindow === null) {
-      playerWindow = windows.player()
-      playerWindow.on('close', () => {
-        appSettings.set('position.playerWindow', playerWindow.getPosition())
-        appSettings.set('size.playerWindow', playerWindow.getSize())
-        playerWindow = null
-        playerWindow.webContents.session.clearCache()
+    if (appWindows.player === null) {
+      appWindows.player = windows.player()
+      appWindows.player.on('close', () => {
+        appSettings.set('position.playerWindow', appWindows.player.getPosition())
+        appSettings.set('size.playerWindow', appWindows.player.getSize())
+        appWindows.player = null
+        appWindows.player.webContents.session.clearCache()
       })
     }
-    playerWindow.loadURL(windowURL)
+    appWindows.player.loadURL(windowURL)
   }
 })
 
@@ -117,21 +110,21 @@ ipcMain.on('open-bookmarks', (event, arg) => {
     ? `http://localhost:9080/#/bookmarks`
     : `file://${__dirname}/index.html#bookmarks`
 
-  if (bookmarksWindow === null) {
-    bookmarksWindow = windows.bookmarks()
+  if (appWindows.bookmarks === null) {
+    appWindows.bookmarks = windows.bookmarks()
   } else {
-    bookmarksWindow.restore()
-    bookmarksWindow.show()
+    appWindows.bookmarks.restore()
+    appWindows.bookmarks.show()
   }
 
-  bookmarksWindow.on('close', () => {
-    appSettings.set('position.bookmarksWindow', bookmarksWindow.getPosition())
-    appSettings.set('size.bookmarksWindow', bookmarksWindow.getSize())
-    bookmarksWindow = null
-    bookmarksWindow.webContents.session.clearCache()
+  appWindows.bookmarks.on('close', () => {
+    appSettings.set('position.bookmarksWindow', appWindows.bookmarks.getPosition())
+    appSettings.set('size.bookmarksWindow', appWindows.bookmarks.getSize())
+    appWindows.bookmarks = null
+    appWindows.bookmarks.webContents.session.clearCache()
   })
-  bookmarksWindow.on('ready-to-show', () => {
-    bookmarksWindow.show()
+  appWindows.bookmarks.on('ready-to-show', () => {
+    appWindows.bookmarks.show()
   }).loadURL(bookmarkURL)
 })
 
@@ -140,13 +133,13 @@ ipcMain.on('open-followings', (event, arg) => {
     ? `http://localhost:9080/#/favorites/${arg.user.uid}?type=Following&name=${arg.user.nickname}`
     : `file://${__dirname}/index.html#favorites/${arg.user.uid}?type=Following&name=${arg.user.nickname}`
 
-  let window = windows.favorites('followings')
+  let window = appWindows[`followings_${arg.user.id}`] = windows.favorites('followings')
   window.on('ready-to-show', () => {
     window.show()
   }).on('close', () => {
     appSettings.set('position.followingsWindow', window.getPosition())
-    window = null
     window.webContents.session.clearCache()
+    window = null
   }).loadURL(windowURL)
 })
 
@@ -155,13 +148,13 @@ ipcMain.on('open-followers', (event, arg) => {
     ? `http://localhost:9080/#/favorites/${arg.user.uid}?type=Fans&name=${arg.user.nickname}`
     : `file://${__dirname}/index.html#favorites/${arg.user.uid}?type=Fans&name=${arg.user.nickname}`
 
-  let window = windows.favorites('fans')
+  let window = appWindows[`followers_${arg.user.id}`] = windows.favorites('fans')
   window.on('ready-to-show', () => {
     window.show()
   }).on('close', () => {
     appSettings.set('position.fansWindow', window.getPosition())
-    window = null
     window.webContents.session.clearCache()
+    window = null
   }).loadURL(windowURL)
 })
 
@@ -170,12 +163,12 @@ ipcMain.on('open-comments', (event, arg) => {
     ? `http://localhost:9080/#/comments?vtime=${arg.vtime}&msgfile=${arg.msgfile}`
     : `file://${__dirname}/index.html#comments?vtime=${arg.vtime}&msgfile=${arg.msgfile}`
 
-  let window = windows.comments()
+  let window = appWindows[`comments_${arg.msgfile}`] = windows.comments()
   window.on('ready-to-show', () => {
     window.show()
   }).on('close', () => {
     appSettings.set('position.followingsWindow', window.getPosition())
-    window = null
     window.webContents.session.clearCache()
+    window = null
   }).loadURL(windowURL)
 })
