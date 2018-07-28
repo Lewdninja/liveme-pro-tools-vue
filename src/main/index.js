@@ -8,8 +8,14 @@ const helpers = require('./helpers').default
 const windows = require('./windows').default
 const appSettings = require('electron-settings')
 
+let auth = {}
+if (appSettings.get('auth.email') && appSettings.get('auth.password')) {
+  auth.email = appSettings.get('auth.email')
+  auth.password = appSettings.get('auth.password')
+}
+
 const LivemeAPI = require('liveme-api')
-const Liveme = new LivemeAPI({})
+const Liveme = new LivemeAPI(auth)
 
 const appWindows = {
   main: null,
@@ -36,10 +42,6 @@ function createWindow () {
   appWindows.main.loadURL(winURL)
 
   global.Liveme = Liveme
-  if (appSettings.get('auth.email') && appSettings.get('auth.password')) {
-    global.Liveme.setAuthDetails(appSettings.get('auth.email').trim(), appSettings.get('auth.password').trim())
-      .catch(e => console.log('Authentication failed.', JSON.stringify(e.message)))
-  }
   // Load data to app
   global.DataManager = new DataManager()
   global.DataManager.loadFromDisk()

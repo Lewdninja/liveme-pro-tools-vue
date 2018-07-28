@@ -37,8 +37,15 @@ export class DataManager {
   }
 
   saveFileData (file, data) {
-    if (typeof data !== 'string') data = JSON.stringify(data, null, 2)
-    fs.writeFile(this.filePath(file), data, () => {})
+    try {
+      if (typeof data !== 'string') data = JSON.stringify(data, null, 2)
+      if (data && data.length) {
+        console.log(file, data)
+        fs.writeFile(this.filePath(file), data, () => {})
+      }
+    } catch (e) {
+      fs.writeFileSync('saveFileDataError.json', e)
+    }
   }
 
   wipeAllData () {

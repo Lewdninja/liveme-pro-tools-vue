@@ -120,7 +120,10 @@
               this.bookmarkProgress = Number(Math.round((count / bookmarks.length) * 100))
             })
             .catch(err => {
-              console.log('Error', new Date(), err)
+              if (typeof err.response.body === 'string') {
+                const json = JSON.parse(err.response.body)
+                console.log(json)
+              }
             })
         }, () => {
           this.bookmarkProgress = 0
@@ -162,7 +165,14 @@
             callback()
           })
           .catch(err => {
-            console.log(err)
+            if (typeof err.response.body === 'string') {
+              const json = JSON.parse(err.response.body)
+              console.log(json)
+
+              if (Number(json.status) === 402) {
+                Liveme.user = false
+              }
+            }
             callback()
           })
       },

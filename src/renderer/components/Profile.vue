@@ -215,7 +215,7 @@
 
         Liveme.getUserReplays(this.user.user_info.uid, this.currentReplayPage, this.maxReplaysPerPage)
           .then(replays => {
-            if (replays.length && replays[0].userid === this.user.user_info.uid) {
+            if (replays && replays.length && replays[0].userid === this.user.user_info.uid) {
               for (const replay of replays) {
                 this.rows.push({
                   expire_time: replay.expire_time,
@@ -254,7 +254,10 @@
             }
           })
           .catch(err => {
-            console.log(err)
+            if (typeof err.response.body === 'string') {
+              const json = JSON.parse(err.response.body)
+              console.log(json)
+            }
             if (retries) {
               return setTimeout(() => this.getUserReplays(retries - 1), 100)
             }

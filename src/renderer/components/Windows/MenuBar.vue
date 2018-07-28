@@ -13,10 +13,10 @@
       <vs-sidebar-item @click="goToPage('help')" vs-icon="help">
         Help
       </vs-sidebar-item>
-      <vs-sidebar-item @click="goToPage('settings')" vs-icon="settings">
+      -->
+      <vs-sidebar-item @click="togglePanel('Settings')" vs-icon="settings">
         Settings
       </vs-sidebar-item>
-      -->
       <vs-sidebar-item @click="close" vs-icon="power_settings_new">
         Quit
       </vs-sidebar-item>
@@ -35,7 +35,7 @@
         <vs-button vs-color="dark" vs-size="small" vs-type="filled" vs-icon="home" @click="goToPage('/')">Home</vs-button>
         <vs-button vs-color="dark" vs-size="small" vs-type="filled" vs-icon="search" @click="goToPage('/search')">Search</vs-button>
         <vs-button vs-color="dark" vs-size="small" vs-type="filled" vs-icon="bookmark" @click="openWindow('bookmarks')">Bookmarks</vs-button>
-        <vs-button vs-color="dark" vs-size="small" vs-type="filled" vs-icon="cloud_download" @click="toggleDownloads">Downloads</vs-button>
+        <vs-button vs-color="dark" vs-size="small" vs-type="filled" vs-icon="cloud_download" @click="togglePanel('Downloads')">Downloads</vs-button>
       </div>
       <a href="#" class="right" style="line-height: 3.9rem" @click="close">✕</a>
       <a href="#" class="right" @click="minimize">🗕</a>
@@ -43,21 +43,26 @@
     <downloads
       :visible="showDownloads"
       @hide="showDownloads = false"></downloads>
+    <settings
+      :visible="showSettings"
+      @hide="showSettings = false"></settings>
   </div>
 </template>
 
 <script>
   import Downloads from './Downloads'
+  import Settings from './Settings'
 
   const { remote } = require('electron')
 
   export default {
     name: 'menu-bar',
-    components: { Downloads },
+    components: { Downloads, Settings },
     data () {
       return {
         active: false,
-        showDownloads: false
+        showDownloads: false,
+        showSettings: false
       }
     },
     computed: {
@@ -78,8 +83,9 @@
         this.active = false
         this.$electron.ipcRenderer.send(`open-${page}`, data)
       },
-      toggleDownloads: function () {
-        this.showDownloads = !this.showDownloads
+      togglePanel: function (name) {
+        this.active = false
+        this[`show${name}`] = !this[`show${name}`]
       },
       minimize: () => {
         remote.BrowserWindow.getFocusedWindow().minimize()

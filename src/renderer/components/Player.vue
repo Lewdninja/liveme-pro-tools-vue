@@ -63,7 +63,7 @@
             window.rotation = 0
             window.debugPlayer = this.player
           })
-          .catch(err => console.log(err))
+          .catch(err => console.log(err.response))
       }
     },
     watch: {
