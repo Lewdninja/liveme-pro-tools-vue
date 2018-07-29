@@ -306,7 +306,7 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
+  @import '~@/assets/app'
 
   #contents
     top: 2.75rem

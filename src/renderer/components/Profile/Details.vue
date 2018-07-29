@@ -109,7 +109,7 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
+  @import '~@/assets/app'
 
   #profile-details
     position: absolute

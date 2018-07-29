@@ -103,7 +103,7 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
+  @import '~@/assets/app'
 
   #contents
     top: 5rem

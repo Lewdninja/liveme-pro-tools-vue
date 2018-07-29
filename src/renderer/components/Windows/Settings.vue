@@ -97,7 +97,7 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
+  @import '~@/assets/app'
 
   #settings
     position: absolute

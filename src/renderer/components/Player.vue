@@ -82,8 +82,8 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
-  @import '/static/player.css'
+  @import '~@/assets/app'
+  @import '~@/assets/player.css'
 
   #contents
     top: 2rem

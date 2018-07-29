@@ -38,7 +38,7 @@
 </script>
 
 <style lang="sass">
-  @import 'static/app'
+  @import '~@/assets/app'
 
   #footbar nav
     width: 100%
