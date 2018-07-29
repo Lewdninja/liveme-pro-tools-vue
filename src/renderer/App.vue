@@ -16,6 +16,8 @@
 </script>
 
 <style lang="sass">
+  @import './static/fonts/fonts.css'
+
   $app: #303030
   $primary: #9356f3
   $secondary: #C1A0F5
