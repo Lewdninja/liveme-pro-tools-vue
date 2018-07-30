@@ -25,6 +25,7 @@ const main = () => {
     frame: false,
     backgroundColor: '#000',
     useContentSize: true,
+    show: false,
     webPreferences: {
       webSecurity: false,
       textAreasAreResizable: false,
@@ -54,6 +55,7 @@ const bookmarks = () => {
     fullscreen: false,
     maximizable: false,
     frame: false,
+    show: false,
     backgroundColor: '#000000'
   })
 }
@@ -124,6 +126,7 @@ const player = () => {
     fullscreen: false,
     maximizable: false,
     frame: false,
+    show: false,
     backgroundColor: '#000000',
     webPreferences: {
       webSecurity: false,

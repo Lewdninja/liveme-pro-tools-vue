@@ -2,10 +2,10 @@
   <div id="wrapper">
     <menu-bar :title="name + ' ' + type"></menu-bar>
     <div class="toolbar">
-      <vs-button vs-color="dark" vs-type="filled" vs-icon="remove_red_eye" @click="toggleShowNew()"></vs-button>
+      <vs-button vs-color="dark" vs-type="filled" vs-icon="remove_red_eye" @click="toggleShowSeen()"></vs-button>
       <vs-input placeholder="Search by name or ID" v-model="search" style="margin-left: 6rem; width: 60%"/>
     </div>
-    <div id="contents">
+    <div id="contents" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="2000">
       <ul class="favorites">
         <li v-for="user in list" :class="user.viewedNow ? 'active' : ''">
           <vs-avatar :vs-src="user.user_info.face" class="avatar" @click="showUser(user.user_info)"/>
@@ -53,6 +53,7 @@
   import MenuBar from './Windows/SmallMenuBar'
 
   const async = require('async')
+  const appSettings = require('electron-settings')
 
   export default {
     name: 'favorites',
@@ -62,14 +63,30 @@
         search: '',
         name: '',
         type: false,
+        showSeen: true,
         favorites: [],
         currentFavoritesPage: 1,
-        maxFavoritesPerPage: 50
+        maxFavoritesPerPage: 50,
+        busy: false
       }
     },
     computed: {
       list: function () {
-        return this.favorites
+        return this.favorites.filter(user => {
+          if (!this.showSeen && (user.viewed && !user.viewedNow)) return false
+          let conditions = true
+          if (this.type === 'Following') {
+            conditions = conditions && (appSettings.get('fav.hideZeroReplays') ? !!Number(user.count_info.replay_count) : true)
+          }
+          conditions = conditions && (appSettings.get('fav.hideBookmarked') ? !user.bookmarked : true)
+
+          const search = this.search.toLowerCase()
+          if (!search && !conditions) return false
+          if (user.user_info.uname.toLowerCase().indexOf(search) !== -1) return true && conditions
+          if (user.user_info.uid && user.user_info.uid.indexOf(search) !== -1) return true && conditions
+          if (user.user_info.short_id && user.user_info.short_id.indexOf(search) !== -1) return true && conditions
+          return false
+        })
       }
     },
     methods: {
@@ -88,23 +105,27 @@
           if (this.favorites[i].user_info.uid === user.uid) {
             this.favorites[i].viewed = true
             this.favorites[i].viewedNow = true
-            console.log(this.favorites[i].user_info.uid, user.uid)
             break
           }
         }
+      },
+      toggleShowSeen: function () {
+        this.showSeen = !this.showSeen
       },
       getFavorites: function () {
         const Liveme = this.$electron.remote.getGlobal('Liveme')
         const DataManager = this.$electron.remote.getGlobal('DataManager')
 
-        this.$vs.loading({
-          background: 'rgba(0, 0, 0, .5)'
-        })
+        this.busy = true
 
         Liveme[`get${this.type}`](this.$route.params.id, this.currentFavoritesPage, this.maxFavoritesPerPage)
           .then(results => {
             const data = []
-            async.eachLimit(results, 20, (result, next) => {
+            if (results.length === 0) {
+              this.busy = true
+              return
+            }
+            async.each(results, (result, next) => {
               Liveme.getUserInfo(result.uid)
                 .then(user => {
                   user.viewed = DataManager.wasProfileViewed(user.user_info.uid)
@@ -119,13 +140,18 @@
                 })
             }, () => {
               this.favorites.push(...data)
+              this.busy = false
               this.$vs.loading.close()
             })
+            this.currentFavoritesPage += 1
           })
           .catch(err => {
             console.log(err)
             this.$vs.loading.close()
           })
+      },
+      loadMore: function () {
+        this.getFavorites()
       },
       openWindow: function (page, data = undefined) {
         this.$electron.ipcRenderer.send(`open-${page}`, data)
@@ -134,8 +160,9 @@
     created () {
       this.name = this.$route.query.name
       this.type = this.$route.query.type
-
-      this.getFavorites()
+      this.$vs.loading({
+        background: 'rgba(0, 0, 0, .5)'
+      })
     }
   }
 </script>

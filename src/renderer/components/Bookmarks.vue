@@ -38,6 +38,7 @@
   import MenuBar from './Windows/SmallMenuBar'
 
   const prettyDate = require('pretty-date')
+  const appSettings = require('electron-settings')
 
   export default {
     name: 'bookmarks',
@@ -54,11 +55,14 @@
         return this.bookmarks.filter((user) => {
           const search = this.search.toLowerCase()
           const showNew = ((user.newest_replay > user.last_viewed) || !this.showOnlyNew)
+          const hideZeroReplays = appSettings.get('bm.hideZeroReplays') ? !!Number(user.counts.replays) : true
 
-          if (!search) return showNew
-          if (user.nickname.toLowerCase().indexOf(search) !== -1) return showNew && true
-          if (user.uid && user.uid.indexOf(search) !== -1) return showNew && true
-          if (user.shortid && user.shortid.indexOf(search) !== -1) return showNew && true
+          const conditions = showNew && hideZeroReplays
+
+          if (!search) return conditions
+          if (user.nickname.toLowerCase().indexOf(search) !== -1) return conditions && true
+          if (user.uid && user.uid.indexOf(search) !== -1) return conditions && true
+          if (user.shortid && user.shortid.indexOf(search) !== -1) return conditions && true
 
           return false
         })

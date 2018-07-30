@@ -87,6 +87,7 @@
     "vue-analytics": "^5.12.3",
     "vue-electron": "^1.0.6",
     "vue-good-table": "^2.12.1",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-router": "^2.5.3",
     "vuesax": "^3.1.51",
     "vuex": "^2.3.1"

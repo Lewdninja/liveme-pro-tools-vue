@@ -40,6 +40,7 @@ function createWindow () {
 
   appWindows.main = windows.main()
   appWindows.main.loadURL(winURL)
+  appWindows.main.once('ready-to-show', () => appWindows.main.show())
 
   global.Liveme = Liveme
   // Load data to app
@@ -104,6 +105,7 @@ ipcMain.on('open-player', (event, arg) => {
       })
     }
     appWindows.player.loadURL(windowURL)
+    appWindows.player.once('ready-to-show', () => appWindows.player.show())
   }
 })
 
@@ -125,9 +127,8 @@ ipcMain.on('open-bookmarks', (event, arg) => {
     appWindows.bookmarks = null
     appWindows.bookmarks.webContents.session.clearCache()
   })
-  appWindows.bookmarks.on('ready-to-show', () => {
-    appWindows.bookmarks.show()
-  }).loadURL(bookmarkURL)
+  appWindows.bookmarks.loadURL(bookmarkURL)
+  appWindows.bookmarks.on('ready-to-show', () => appWindows.bookmarks.show())
 })
 
 ipcMain.on('open-followings', (event, arg) => {

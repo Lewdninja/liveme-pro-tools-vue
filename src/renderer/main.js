@@ -4,6 +4,7 @@ import axios from 'axios'
 import Vuesax from 'vuesax'
 import VueTable from 'vue-good-table'
 import VueAnalytics from 'vue-analytics'
+import VueScroll from 'vue-infinite-scroll'
 
 import 'vuesax/dist/vuesax.css'
 import 'vue-good-table/dist/vue-good-table.css'
@@ -22,6 +23,7 @@ Vue.use(VueAnalytics, {
     exception: true
   }
 })
+Vue.use(VueScroll)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
