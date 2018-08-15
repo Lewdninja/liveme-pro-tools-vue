@@ -3,7 +3,6 @@ import axios from 'axios'
 
 import Vuesax from 'vuesax'
 import VueTable from 'vue-good-table'
-import VueAnalytics from 'vue-analytics'
 import VueScroll from 'vue-infinite-scroll'
 
 import 'vuesax/dist/vuesax.css'
@@ -16,13 +15,6 @@ import store from './store'
 
 Vue.use(Vuesax)
 Vue.use(VueTable)
-Vue.use(VueAnalytics, {
-  id: 'UA-122713612-1',
-  router,
-  autoTracking: {
-    exception: true
-  }
-})
 Vue.use(VueScroll)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

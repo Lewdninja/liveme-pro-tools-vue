@@ -204,10 +204,10 @@
       this.general_playerPath = appSettings.get('general.playerPath') || ''
       this.downloads_path = appSettings.get('downloads.path')
       this.downloads_template = appSettings.get('downloads.template')
-      this.downloads_ffmpeg = appSettings.get('downloads.ffmpeg')
-      this.downloads_method = appSettings.get('downloads.method')
-      this.downloads_parallel = appSettings.get('downloads.parallel')
-      this.downloads_teltmp = appSettings.get('downloads.deltmp')
+      this.downloads_ffmpeg = appSettings.get('downloads.ffmepg')
+      this.downloads_method = appSettings.get('downloads.method') || 'ffmpeg'
+      this.downloads_parallel = appSettings.get('downloads.parallel') || 3
+      this.downloads_teltmp = appSettings.get('downloads.deltmp') || true
     }
   }
 </script>

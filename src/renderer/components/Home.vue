@@ -23,8 +23,11 @@
                 </div>
               </li>
             </ul>
-            <vs-alert vs-color="success" vs-active="true" vs-icon="check_circle" v-if="!newReplays.length && !checkingBookmarks">
+            <vs-alert vs-color="success" :vs-active="!newReplays.length && !checkingBookmarks && authenticated" vs-icon="check_circle">
               There's no new replays available. You're all caught up!
+            </vs-alert>
+            <vs-alert vs-color="danger" :vs-active="!authenticated" vs-icon="error_outline">
+              You are not authenticated, could not run replays check.
             </vs-alert>
           </div>
         </vs-col>
@@ -61,6 +64,7 @@
         newReplays: [],
         checkingBookmarks: false,
         bookmarkProgress: 0,
+        authenticated: true,
         feed: [
           {
             title: 'New Developer',
@@ -84,14 +88,23 @@
       checkBookmarks: function () {
         const Liveme = this.$electron.remote.getGlobal('Liveme')
         const DataManager = this.$electron.remote.getGlobal('DataManager')
+        this.authenticated = true
 
-        if (!Liveme.user) return setTimeout(() => this.checkBookmarks(), 5000)
+        if (!Liveme.user) {
+          this.authenticated = false
+          return setTimeout(() => this.checkBookmarks(), 5000)
+        }
         this.checkingBookmarks = true
 
         const bookmarks = DataManager.getAllBookmarks()
         let count = 0
 
         async.eachLimit(bookmarks, 5, (bookmark, next) => {
+          if (!Liveme.user) {
+            this.authenticated = false
+            return next()
+          }
+
           Liveme.getUserInfo(bookmark.uid)
             .then(user => {
               if (user === undefined) return next()
@@ -164,7 +177,8 @@
           .catch(err => {
             console.log(err)
 
-            if (Number(err.status) === 402) {
+            if (Number(err.status) === 402 || err.msg.indexOf('authenticated') !== -1) {
+              this.authenticated = false
               Liveme.user = false
             }
             callback()

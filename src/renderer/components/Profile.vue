@@ -42,6 +42,9 @@
               <span v-if="props.row.live" class="live" title="Currently Live">
                 <i class="material-icons" title="Live">live_tv</i> LIVE
               </span>
+              <span v-if="props.row.highlight" class="highlight" title="Searched replay">
+                <i class="material-icons">search</i> Searched
+              </span>
             </a>
           </span>
           <span v-else-if="props.column.field !== 'actions'">
@@ -146,6 +149,7 @@
           }
         ],
         rows: [],
+        highlightRow: false,
         replayDetails: {},
         replayDetailsVisible: false
       }
@@ -181,6 +185,8 @@
           background: 'rgba(0, 0, 0, .5)'
         })
         this.clearReplays()
+        // Check if we need to higlight a replay
+        this.highlightRow = this.$route.query.highlight || false
         Liveme.getUserInfo(this.$route.params.id)
           .then(user => {
             this.bookmark = DataManager.getSingleBookmark(user.user_info.uid)
@@ -232,7 +238,8 @@
                   vtime: replay.vtime,
                   downloaded: DataManager.wasDownloaded(replay.vid),
                   watched: DataManager.wasWatched(replay.vid),
-                  live: (replay.hlsvideosource.endsWith('flv') || replay.hlsvideosource.indexOf('liveplay') > 0)
+                  live: (replay.hlsvideosource.endsWith('flv') || replay.hlsvideosource.indexOf('liveplay') > 0),
+                  highlight: String(this.highlightRow) === String(replay.vid)
                 })
               }
             }
@@ -242,7 +249,7 @@
               DataManager.updateBookmark(this.bookmark)
             }
             // Check if more replays to load
-            if (replays.length === this.maxReplaysPerPage) {
+            if (replays && replays.length === this.maxReplaysPerPage) {
               this.currentReplayPage += 1
               this.getUserReplays()
             } else {
@@ -254,9 +261,11 @@
             }
           })
           .catch(err => {
-            if (typeof err.response.body === 'string') {
+            if (err && err.response && typeof err.response.body === 'string') {
               const json = JSON.parse(err.response.body)
               console.log(json)
+            } else {
+              console.log(err)
             }
             if (retries) {
               return setTimeout(() => this.getUserReplays(retries - 1), 100)
@@ -427,7 +436,7 @@
             &.blue
               color: lightblue
               opacity: .7
-          .live
+          .live, .highlight
             color: red
             font-weight: 700
             .material-icons

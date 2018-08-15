@@ -26,6 +26,9 @@
   const path = require('path')
   const ffmpeg = require('fluent-ffmpeg')
   const async = require('async')
+  const appSettings = require('electron-settings')
+  // Set custom FFMPEG path if defined
+  if (appSettings.get('downloads.ffmepg')) ffmpeg.setFfmpegPath(appSettings.get('downloads.ffmepg'))
 
   export default {
     name: 'profile-details',

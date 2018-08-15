@@ -38,6 +38,14 @@ const checkFreshInstallAndSettings = () => {
     })
   }
 
+  if (['ffmpeg', 'chunk'].indexOf(appSettings.get('downloads.method')) === -1) {
+    appSettings.set('downloads.method', 'ffmpeg')
+  }
+
+  if (!appSettings.get('downloads.deltmp')) {
+    appSettings.set('downloads.deltmp', true)
+  }
+
   if (!appSettings.get('downloads.path')) {
     appSettings.set('downloads', {
       path: path.join(app.getPath('home'), 'Downloads'),

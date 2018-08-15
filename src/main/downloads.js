@@ -132,7 +132,7 @@ export default async.queue((task, done) => {
           })
         })
         break
-      case 'ffmpeg':
+      default:
         ffmpeg(video.hlsvideosource)
           .outputOptions([
             '-c copy',

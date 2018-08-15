@@ -24,6 +24,9 @@
     box-sizing: border-box
     font-family: 'source-sans-pro', Arial, Helvetica, sans-serif
 
+  body
+    overflow: hidden
+
   #app
     color: #eaeaea
     font-size: 18px
