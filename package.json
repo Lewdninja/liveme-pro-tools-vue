@@ -27,7 +27,6 @@
     "directories": {
       "output": "build"
     },
-    "publish": null,
     "files": [
       "dist/electron/**/*"
     ],
@@ -52,7 +51,12 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "category": "public.app-category.video",
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "dmg"
+      ],
+      "identity": null
     },
     "win": {
       "target": [
@@ -67,8 +71,27 @@
       "icon": "build/icons/icon.ico"
     },
     "linux": {
-      "icon": "build/icons"
-    }
+      "icon": "build/icons",
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "category": "Network"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "vPrefixedTagName": true,
+        "releaseType": "release",
+        "owner": "Lewdninja",
+        "repo": "liveme-pro-tools-vue"
+      }
+    ]
   },
   "dependencies": {
     "async": "^2.6.1",
