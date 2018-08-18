@@ -1,25 +1,20 @@
-# liveme-tools
-
+# liveme-pro-tools-vue
 > Liveme Tools - Search, browse and view livestreams.
 
-#### Build Setup
+#### Requirements
+##### Node.js 8.x.x 
+[Get it here - nodejs.org](https://nodejs.org/en/)
+##### Git
+[Get it here - git-scm.com](https://git-scm.com/download/win)
 
-``` bash
-# install dependencies
+#### Running the tool
+```bash
+# Clone the repository using Git Bash
+git clone https://github.com/Lewdninja/liveme-pro-tools-vue.git
+# Go into the cloned folder
+cd liveme-pro-tools-vue
+# Install app dependencies using NPM (comes with Node)
 npm install
-
-# serve with hot reload at localhost:9080
+# Run the tool
 npm run dev
-
-# build electron application for production
-npm run build
-
-
-# lint all JS/Vue component files in `src/`
-npm run lint
-
 ```
-
----
-
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[4c6ee7b](https://github.com/SimulatedGREG/electron-vue/tree/4c6ee7bf4f9b4aa647a22ec1c1ca29c2e59c3645) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
