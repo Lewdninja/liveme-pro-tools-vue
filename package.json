@@ -27,7 +27,6 @@
     "productName": "liveme-pro-tools",
     "appId": "org.simulatedgreg.electron-vue",
     "artifactName": "${productName}-${version}-${arch}.${ext}",
-    "asar": true,
     "compression": "maximum",
     "directories": {
       "output": "build"
