@@ -1,40 +1,30 @@
-version: '{branch}-{build}'
-
-branches:
-  only:
-    - master
+os: unstable
 
 cache:
   - node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
-  - '%USERPROFILE%\AppData\Local\Yarn\cache'
 
 environment:
   GH_TOKEN:
     secure: GgKMl9g/8O7dGjeoOWiabGqo9gYh7ZoqHK1bS2P2JKlm7S1k+sqPAxu1F+MPrIl5
   matrix:
-    - nodejs_version: 8
-
-init:
-  - git config --global core.autocrlf input
 
 install:
-  - ps: Install-Product node 8 x64
-  - git reset --hard HEAD
-  - yarn
-  - node --version
+  - ps: Install-Product node $env:nodejs_version
+  - set CI=true
+  - yarn install
 
 matrix:
   fast_finish: true
 
+build: off
+
+version: '{branch}-{build}'
+
 shallow_clone: true
+
 clone_depth: 1
 
 test_script:
   - yarn release-appveyor
-
-build_script:
-  - yarn build
-
-test: off
