@@ -8,7 +8,7 @@
     <div id="contents" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="2000">
       <ul class="favorites">
         <li v-for="user in list" :class="user.viewedNow ? 'active' : ''">
-          <vs-avatar :vs-src="user.user_info.face" class="avatar" @click="showUser(user.user_info)"/>
+          <vs-avatar :src="user.user_info.face" class="avatar" @click="showUser(user.user_info)"/>
           <div class="title" :class="userSex(user.user_info)" @click="showUser(user.user_info)">{{ user.user_info.nickname }}
             <vs-chip vs-color="danger" v-if="user.user_info.isAdmin !== '0'">Admin</vs-chip>
             <vs-chip vs-color="warning" v-if="user.user_info.isVIP !== '0'">VIP</vs-chip>

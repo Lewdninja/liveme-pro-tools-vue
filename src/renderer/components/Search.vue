@@ -27,7 +27,7 @@
       <div class="results">
         <ul class="users">
           <li v-for="user in list">
-            <vs-avatar :vs-src="user.user_info.face" class="avatar" @click="showUser(user.user_info)"/>
+            <vs-avatar :src="user.user_info.face" class="avatar" @click="showUser(user.user_info)"/>
             <div class="title" :class="user.sex" @click="showUser(user.user_info)">{{ user.user_info.nickname }}</div>
             <vs-row class="text">
               <vs-col vs-type="flex" vs-w="3">

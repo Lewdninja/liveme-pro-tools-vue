@@ -4,7 +4,7 @@
     <div id="contents" v-if="user.user_info">
       <header>
         <div class="backdrop" :style="'background-image:url(' + user.user_info.big_cover + ')'"></div>
-        <vs-avatar :vs-src="user.user_info.face" class="avatar"/>
+        <vs-avatar :src="user.user_info.face" class="avatar"/>
         <section class="meta">
           <div class="title">{{ user.user_info.nickname }}</div>
           <div class="actions">

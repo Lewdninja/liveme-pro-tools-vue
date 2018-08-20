@@ -14,7 +14,7 @@
             </div>
             <ul class="bookmark-replays" v-if="newReplays.length">
               <li v-for="user in newReplays">
-                <vs-avatar :vs-src="user.face" :vs-badge="user.newReplays" class="avatar"/>
+                <vs-avatar :src="user.face" :vs-badge="user.newReplays" class="avatar"/>
                 <router-link :to="'/profile/' + user.uid" class="title">{{ user.nickname }}</router-link>
                 <div class="text">Latest replay ended {{ user.latestReplay }}.</div>
                 <div class="buttons">

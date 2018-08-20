@@ -9,7 +9,7 @@
     <div id="contents">
       <ul class="bookmarks">
         <li v-for="user in list" :class="newReplayAvailable(user)">
-          <vs-avatar :vs-src="user.face" class="avatar" @click="showUser(user)"/>
+          <vs-avatar :src="user.face" class="avatar" @click="showUser(user)"/>
           <div class="title" :class="userSex(user)" @click="showUser(user)">{{ user.nickname }}</div>
           <vs-row class="text">
             <vs-col vs-type="flex" vs-w="7">
