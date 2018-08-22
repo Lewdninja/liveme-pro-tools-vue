@@ -57,6 +57,8 @@ function createWindow () {
     appSettings.set('size.mainWindow', appWindows.main.getSize())
     // Destroy all windows
     Object.entries(appWindows).forEach(([index, window]) => {
+      appSettings.set(`position.${index}Window`, appWindows[index].getPosition())
+      appSettings.set(`size.${index}Window`, appWindows[index].getSize())
       if (window !== null) window.destroy()
     })
   })
@@ -86,7 +88,7 @@ ipcMain.on('open-player', (event, arg) => {
   const internalPlayer = appSettings.get('general.playerpath')
   let playerPath = internalPlayer
 
-  if (playerPath.length > 5) {
+  if (playerPath && playerPath.length > 5) {
     Liveme.getVideoInfo(arg.videoid)
       .then(video => exec(playerPath.replace('%url%', video.hlsvideosource)))
       .catch(err => console.log(err))
