@@ -224,6 +224,7 @@
             if (replays && replays.length && replays[0].userid === this.user.user_info.uid) {
               for (const replay of replays) {
                 this.rows.push({
+                  id: replay.vid,
                   expire_time: replay.expire_time,
                   hlsvideosource: replay.hlsvideosource,
                   msgfile: replay.msgfile,
@@ -285,7 +286,10 @@
         this.replayDetailsVisible = true
       },
       addToQueue: function (video) {
-        video.downloaded = true
+        const vid = this.rows.find(x => x.id === video.id)
+        if (vid) {
+          vid.downloaded = true
+        }
         this.$store.commit('addDownload', {
           ...video,
           uname: this.user.user_info.nickname

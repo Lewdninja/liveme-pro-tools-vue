@@ -35,6 +35,7 @@
     },
     watch: {
       queue (data) {
+        console.log('queue upd')
         const newVideo = data[data.length - 1]
         asyncQueue.push(newVideo.vid, () => {
           this.$store.commit('removeDownload', newVideo)

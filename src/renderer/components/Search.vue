@@ -76,8 +76,8 @@
           { text: 'Video ID', value: 'videoID' },
           // { text: 'Video URL', value: 1 },
           { text: 'User ID', value: 'userID' },
-          { text: 'User Short ID', value: 'shortID' }
-          // { text: 'Username', value: 'username' },
+          { text: 'User Short ID', value: 'shortID' },
+          { text: 'Username', value: 'username' }
           // { text: 'Hashtag', value: 'hashtag' }
         ],
         results: []

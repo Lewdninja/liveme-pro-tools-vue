@@ -164,18 +164,21 @@
     },
     methods: {
       authenticate: function () {
+        console.log('auth')
         this.captcha = ''
         this.loginAlert = false
 
         const Liveme = this.$electron.remote.getGlobal('Liveme')
         Liveme.setAuthDetails(this.email, this.password)
           .then(res => {
+            console.log(res)
             this.getCaptcha()
             this.loginAlert = true
             this.loginAlertColor = 'success'
             this.loginAlertMessage = this.loginAlertSuccessMessage
           })
           .catch(err => {
+            console.log(err)
             this.getCaptcha()
             this.loginAlert = true
             this.loginAlertColor = 'danger'

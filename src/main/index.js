@@ -57,9 +57,11 @@ function createWindow () {
     appSettings.set('size.mainWindow', appWindows.main.getSize())
     // Destroy all windows
     Object.entries(appWindows).forEach(([index, window]) => {
-      appSettings.set(`position.${index}Window`, appWindows[index].getPosition())
-      appSettings.set(`size.${index}Window`, appWindows[index].getSize())
-      if (window !== null) window.destroy()
+      if (window !== null) {
+        appSettings.set(`position.${index}Window`, window.getPosition())
+        appSettings.set(`size.${index}Window`, window.getSize())
+        window.destroy()
+      }
     })
   })
 }

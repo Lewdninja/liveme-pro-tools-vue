@@ -170,4 +170,4 @@ export default async.queue((task, done) => {
         break
     }
   })
-}, Number(appSettings.get('downloads.parallel')) || 3)
+}, Number(appSettings.get('downloads.parallel')) || 300)

@@ -40,7 +40,7 @@ export class DataManager {
     try {
       if (typeof data !== 'string') data = JSON.stringify(data, null, 2)
       if (data && data.length) {
-        console.log(file, data)
+        // console.log(file, data)
         fs.writeFile(this.filePath(file), data, () => {})
       }
     } catch (e) {
